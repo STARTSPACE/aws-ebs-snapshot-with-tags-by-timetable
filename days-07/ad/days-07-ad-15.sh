@@ -51,7 +51,7 @@ retention_date_in_seconds=`date +%s --date "$retention_days days ago"`
 echo Backup started $today >> $logfile
 
 # Grab all volume IDs attached to this instance, and export the IDs to a text file
-aws ec2 describe-volumes  --filters Name=tag:bash-snaptime,Values=15-00 Name=tag:bash-profile,Values=ad --query Volumes[*].[VolumeId] --output text | tr '\t' '\n' > ~/tmp/volume_info.txt 2>&1
+aws ec2 describe-volumes  --filters Name=tag:snap-07-time,Values=15-00 Name=tag:bash-profile,Values=ad --query Volumes[*].[VolumeId] --output text | tr '\t' '\n' > ~/tmp/volume_info.txt 2>&1
 
 # Take a snapshot of all volumes attached to this instance
 for volume_id in $(cat ~/tmp/volume_info.txt)
