@@ -40,7 +40,7 @@ export PATH=$PATH:/usr/local/bin/:/usr/bin
 ## START SCRIPT
 
 # Set Variables
-today=`date +"%m-%d-%Y"+"%T"`
+today=`date +"%d-%m-%Y"+"%T"`
 logfile="/awslog/ebs-snapshot.log"
 
 # How many days do you wish to retain backups for?
@@ -51,7 +51,7 @@ retention_date_in_seconds=`date +%s --date "$retention_days days ago"`
 echo Backup started $today >> $logfile
 
 # Grab all volume IDs attached to this instance, and export the IDs to a text file
-aws ec2 describe-volumes  --filters Name=tag:bash-snaptime,Values=00-00 Name=tag:bash-profile,Values=ad --query Volumes[*].[VolumeId] --output text | tr '\t' '\n' > ~/tmp/volume_info.txt 2>&1
+sudo aws ec2 describe-volumes  --filters Name=tag:bash-snaptime,Values=00-00 Name=tag:bash-profile,Values=ad --query Volumes[*].[VolumeId] --output text | tr '\t' '\n' > ~/tmp/volume_info.txt 2>&1
 
 # Take a snapshot of all volumes attached to this instance
 for volume_id in $(cat ~/tmp/volume_info.txt)

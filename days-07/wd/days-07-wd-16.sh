@@ -40,7 +40,7 @@ export PATH=$PATH:/usr/local/bin/:/usr/bin
 ## START SCRIPT
 
 # Set Variables
-today=`date +"%m-%d-%Y"+"%T"`
+today=`date +"%d-%m-%Y"+"%T"`
 logfile="/awslog/ebs-snapshot.log"
 
 # How many days do you wish to retain backups for?
@@ -51,10 +51,10 @@ retention_date_in_seconds=`date +%s --date "$retention_days days ago"`
 echo Backup started $today >> $logfile
 
 # Grab all volume IDs attached to this instance, and export the IDs to a text file
-aws ec2 describe-volumes  --filters Name=tag:snap-07-time,Values=16-00 Name=tag:bash-profile,Values=wd --query Volumes[*].[VolumeId] --output text | tr '\t' '\n' > ~/tmp/volume_info.txt 2>&1
+sudo aws ec2 describe-volumes  --filters Name=tag:snap-07-time,Values=16-00 Name=tag:bash-profile,Values=wd --query Volumes[*].[VolumeId] --output text | tr '\t' '\n' > ~/tmp/volume-info-days-07.txt 2>&1
 
 # Take a snapshot of all volumes attached to this instance
-for volume_id in $(cat ~/tmp/volume_info.txt)
+for volume_id in $(cat ~/tmp/volume-info-days-07.txt)
 do
     description="$(hostname)-backup-$(date +%Y-%m-%d)"
 	echo "Volume ID is $volume_id" >> $logfile
@@ -66,20 +66,20 @@ do
          
     # And then we're going to add a "CreatedBy:AutomatedBackup" tag to the resulting snapshot.
     # Why? Because we only want to purge snapshots taken by the script later, and not delete snapshots manually taken.
-    sudo aws ec2 create-tags --resource $snapresult --tags Key=CreatedBy,Value=AutomatedBackup
+    sudo aws ec2 create-tags --resource $snapresult --tags Key=Created-By,Value=STS-Automated-Backup
 done
 
 # Get all snapshot IDs associated with each volume attached to this instance
-rm ~/tmp/snapshot_info.txt --force
+rm ~/tmp/snapshot-info-days-07.txt --force
 
-for vol_id in $(cat ~/tmp/volume_info.txt)
+for vol_id in $(cat ~/tmp/volume-info-days-07.txt)
 
 do
-    sudo aws ec2 describe-snapshots --output=text --filters "Name=volume-id,Values=$vol_id" "Name=tag:CreatedBy,Values=AutomatedBackup" --query Snapshots[*].[SnapshotId] | tr '\t' '\n' | sort | uniq >> ~/tmp/snapshot_info.txt 2>&1
+    sudo aws ec2 describe-snapshots --output=text --filters "Name=volume-id,Values=$vol_id" "Name=tag:Created-By,Values=Values=STS-Automated-Backup" --query Snapshots[*].[SnapshotId] | tr '\t' '\n' | sort | uniq >> ~/tmp/snapshot-info-days-07.txt 2>&1
 done
 
 # Purge all instance volume snapshots created by this script that are older than X days
-for snapshot_id in $(cat ~/tmp/snapshot_info.txt)
+for snapshot_id in $(cat ~/tmp/snapshot-info-days-07.txt)
 do
     echo "Checking $snapshot_id..."
 	snapshot_date=$(sudo aws ec2 describe-snapshots --output=text --snapshot-ids $snapshot_id --query Snapshots[*].[StartTime] | awk -F "T" '{printf "%s\n", $1}')
