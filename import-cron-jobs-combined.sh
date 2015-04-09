@@ -142,4 +142,3 @@
 0 21 * * 1-5 ~/aws/snapshot/days-07/wd/days-07-wd-21.sh
 0 22 * * 1-5 ~/aws/snapshot/days-07/wd/days-07-wd-22.sh
 0 23 * * 1-5 ~/aws/snapshot/days-07/wd/days-07-wd-23.sh
-
