@@ -766,4 +766,3 @@
 0 21 * * 1-5 ~/aws/automation/stop/wd/stop-wd-21.sh
 0 22 * * 1-5 ~/aws/automation/stop/wd/stop-wd-22.sh
 0 23 * * 1-5 ~/aws/automation/stop/wd/stop-wd-23.sh
-
