@@ -70,12 +70,12 @@ do
 done
 
 # Get all snapshot IDs associated with each volume attached to this instance
-rm ~/tmp/snapshot-info-days-03.txt --force
+# rm ~/tmp/snapshot-info-days-03.txt --force
 
 for vol_id in $(cat ~/tmp/volume-info-days-03.txt)
 
 do
-    sudo aws ec2 describe-snapshots --output=text --filters "Name=volume-id,Values=$vol_id" "Name=tag:Created-By,Values=Values=STS-Automated-Backup" --query Snapshots[*].[SnapshotId] | tr '\t' '\n' | sort | uniq >> ~/tmp/snapshot-info-days-03.txt 2>&1
+    sudo aws ec2 describe-snapshots --output=text --filters "Name=volume-id,Values=$vol_id" "Name=tag:Created-By,Values=STS-Automated-Backup" --query Snapshots[*].[SnapshotId] | tr '\t' '\n' | sort | uniq >> ~/tmp/snapshot-info-days-03.txt 2>&1
 done
 
 # Purge all instance volume snapshots created by this script that are older than X days
