@@ -70,7 +70,7 @@ do
 done
 
 # Get all snapshot IDs associated with each volume attached to this instance
-# rm ~/tmp/snapshot-info-days-07.txt --force
+rm ~/tmp/snapshot-info-days-07.txt --force
 
 for vol_id in $(cat ~/tmp/volume-info-days-07.txt)
 
